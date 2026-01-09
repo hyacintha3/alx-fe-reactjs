@@ -34,7 +34,7 @@
 // }
 
 // export default App
-import WelcomeMessage from './components/WelcomeMessage';
+import WelcomeMessage from './components/Welcome';
 
 function App() {
     return (
