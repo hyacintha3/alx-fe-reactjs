@@ -20,7 +20,7 @@
 
 // export default App;
 
-import ProfilePage from './ProfilePage';
+import UserProfile from './UserProfile';
 import UserContext from './UserContext';
 
 function App() {
@@ -31,11 +31,9 @@ function App() {
 
   return (
     <UserContext.Provider value={userData}>
-      <ProfilePage />
+      <UserProfile />
     </UserContext.Provider>
   );
 }
 
 export default App;
-
-
