@@ -1,31 +1,38 @@
-import { Link } from 'react-router-dom';
 import { useRecipeStore } from './recipeStore';
+import EditRecipeForm from './EditRecipeForm';
+import DeleteRecipeButton from './DeleteRecipeButton';
 
-const RecipeList = () => {
-  const filteredRecipes = useRecipeStore((state) => state.filteredRecipes);
-  const recipes = useRecipeStore((state) => state.recipes);
+const RecipeDetails = () => {
+  const { id } = useParams();
+  const recipe = useRecipeStore((state) =>
+    state.recipes.find((r) => r.id === Number(id))
+  );
 
-  const listToShow = filteredRecipes.length > 0 || filteredRecipes.length !== recipes.length
-    ? filteredRecipes
-    : recipes;
+  const favorites = useRecipeStore((state) => state.favorites);
+  const addFavorite = useRecipeStore((state) => state.addFavorite);
+  const removeFavorite = useRecipeStore((state) => state.removeFavorite);
+
+  if (!recipe) return <p>Recipe not found</p>;
+
+  const isFavorite = favorites.includes(recipe.id);
 
   return (
     <div>
-      <h2>Recipes</h2>
+      <h2>{recipe.title}</h2>
+      <p>{recipe.description}</p>
 
-      {listToShow.length === 0 && <p>No recipes found.</p>}
+      <button
+        onClick={() =>
+          isFavorite ? removeFavorite(recipe.id) : addFavorite(recipe.id)
+        }
+      >
+        {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+      </button>
 
-      {listToShow.map((recipe) => (
-        <div key={recipe.id}>
-          <h3>
-            <Link to={`/recipe/${recipe.id}`}>
-              {recipe.title}
-            </Link>
-          </h3>
-        </div>
-      ))}
+      <EditRecipeForm recipe={recipe} />
+      <DeleteRecipeButton recipeId={recipe.id} />
     </div>
   );
 };
 
-export default RecipeList;
+export default RecipeDetails;
