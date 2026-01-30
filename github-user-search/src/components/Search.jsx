@@ -69,44 +69,28 @@ function Search() {
   const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
 
-  // Function to fetch users from GitHub API
-//   const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
-//     let query = "";
-//     if (username) query += `${username} `;
-//     if (location) query += `location:${location} `;
-//     if (minRepos) query += `repos:>=${minRepos}`;
-
-//     const response = await axios.get("https://api.github.com/search/users", {
-//       params: { q: query.trim(), page, per_page: 5 },
-//     });
-
-//     return response.data || { items: [] };
-//   };
-const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
+  // --- Advanced API integration ---
+  const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
     let query = "";
     if (username) query += `${username} `;
     if (location) query += `location:${location} `;
     if (minRepos) query += `repos:>=${minRepos}`;
-  
-    // GitHub token config (optional)
+
     const config = {
       headers: {
-        Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+        Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`, // optional token
       },
     };
-  
-    // Must be inside async function
-    const response = await axios.get(
-      "https://api.github.com/search/users",
-      { params: { q: query.trim(), page, per_page: 5 }, ...config }
-    );
-  
+
+    const response = await axios.get("https://api.github.com/search/users", {
+      params: { q: query.trim(), page, per_page: 5 },
+      ...config,
+    });
+
     return response.data || { items: [] };
   };
-  
-  
 
-  // Handle search form submit
+  // --- Handle search ---
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -130,7 +114,7 @@ const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
     }
   };
 
-  // Load more results (pagination)
+  // --- Load more results (pagination) ---
   const loadMore = async () => {
     const nextPage = page + 1;
     setPage(nextPage);
@@ -151,7 +135,7 @@ const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
 
   return (
     <div className="max-w-3xl mx-auto mt-8">
-      {/* Search Form */}
+      {/* --- Search Form --- */}
       <form
         onSubmit={handleSearch}
         className="bg-white p-6 rounded shadow space-y-4"
@@ -179,13 +163,13 @@ const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
         />
         <button
           type="submit"
-          className="w-full bg-black text-white p-2 rounded"
+          className="w-full bg-black text-white p-2 rounded hover:bg-gray-800 transition"
         >
           Search
         </button>
       </form>
 
-      {/* Loading & Error Messages */}
+      {/* --- Loading & Error --- */}
       {loading && <p className="mt-4 text-center">Loading...</p>}
       {error && (
         <p className="mt-4 text-center text-red-600">
@@ -193,7 +177,7 @@ const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
         </p>
       )}
 
-      {/* Search Results */}
+      {/* --- Display Results --- */}
       <div className="mt-6 space-y-4">
         {users.map((user) => (
           <div
@@ -211,7 +195,7 @@ const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
                 href={user.html_url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue-600"
+                className="text-blue-600 hover:underline"
               >
                 View Profile
               </a>
@@ -220,11 +204,11 @@ const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
         ))}
       </div>
 
-      {/* Load More Button */}
+      {/* --- Load More Button --- */}
       {users.length > 0 && (
         <button
           onClick={loadMore}
-          className="mt-4 w-full border p-2 rounded bg-gray-200 hover:bg-gray-300"
+          className="mt-4 w-full border p-2 rounded bg-gray-200 hover:bg-gray-300 transition"
         >
           Load More
         </button>
