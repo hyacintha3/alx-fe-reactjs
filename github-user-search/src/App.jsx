@@ -46,13 +46,31 @@
 
 // export default App;
 
+// import Search from "./components/Search";
+
+// function App() {
+//   return (
+//     <div style={{ padding: "20px" }}>
+//       <h1>GitHub User Search</h1>
+//       <Search />
+//     </div>
+//   );
+// }
+
+// export default App;
+
+
 import Search from "./components/Search";
 
 function App() {
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>GitHub User Search</h1>
-      <Search />
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-black text-white p-4 text-center">
+        <h1 className="text-2xl font-bold">GitHub User Search</h1>
+      </header>
+      <main className="p-4">
+        <Search />
+      </main>
     </div>
   );
 }

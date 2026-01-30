@@ -8,30 +8,40 @@
 // };
 
 
+// import axios from "axios";
+
+// // Function for advanced GitHub user search
+// export const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
+//   let query = "";
+
+//   if (username) query += `${username} `;
+//   if (location) query += `location:${location} `;
+//   if (minRepos) query += `repos:>=${minRepos}`;
+
+//   const response = await axios.get("https://api.github.com/search/users", {
+//     params: {
+//       q: query.trim(),
+//       page,
+//       per_page: 5,
+//     },
+//   });
+
+//   return response.data;
+// };
+
 import axios from "axios";
 
-export const fetchAdvancedUsers = async ({
-  username,
-  location,
-  minRepos,
-  page,
-}) => {
+export const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
   let query = "";
-
   if (username) query += `${username} `;
   if (location) query += `location:${location} `;
   if (minRepos) query += `repos:>=${minRepos}`;
 
-  const response = await axios.get(
-    "https://api.github.com/search/users",
-    {
-      params: {
-        q: query.trim(),
-        page,
-        per_page: 5,
-      },
-    }
-  );
+  const response = await axios.get("https://api.github.com/search/users", {
+    params: { q: query.trim(), page, per_page: 5 },
+  });
 
-  return response.data;
+  return response.data || { items: [] }; // prevents undefined errors
 };
+
+  

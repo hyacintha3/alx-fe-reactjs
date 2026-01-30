@@ -56,8 +56,9 @@
 
 // export default Search;
 
+
 import { useState } from "react";
-import { fetchAdvancedUsers } from "../services/githubService";
+import axios from "axios";
 
 function Search() {
   const [username, setUsername] = useState("");
@@ -68,6 +69,44 @@ function Search() {
   const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
 
+  // Function to fetch users from GitHub API
+//   const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
+//     let query = "";
+//     if (username) query += `${username} `;
+//     if (location) query += `location:${location} `;
+//     if (minRepos) query += `repos:>=${minRepos}`;
+
+//     const response = await axios.get("https://api.github.com/search/users", {
+//       params: { q: query.trim(), page, per_page: 5 },
+//     });
+
+//     return response.data || { items: [] };
+//   };
+const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
+    let query = "";
+    if (username) query += `${username} `;
+    if (location) query += `location:${location} `;
+    if (minRepos) query += `repos:>=${minRepos}`;
+  
+    // GitHub token config (optional)
+    const config = {
+      headers: {
+        Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+      },
+    };
+  
+    // Must be inside async function
+    const response = await axios.get(
+      "https://api.github.com/search/users",
+      { params: { q: query.trim(), page, per_page: 5 }, ...config }
+    );
+  
+    return response.data || { items: [] };
+  };
+  
+  
+
+  // Handle search form submit
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -79,36 +118,43 @@ function Search() {
       const data = await fetchAdvancedUsers({
         username,
         location,
-        minRepos,
+        minRepos: minRepos || undefined,
         page: 1,
       });
-      setUsers(data.items);
-    } catch {
+      setUsers(data.items || []);
+    } catch (err) {
+      console.error(err);
       setError(true);
     } finally {
       setLoading(false);
     }
   };
 
+  // Load more results (pagination)
   const loadMore = async () => {
     const nextPage = page + 1;
     setPage(nextPage);
 
-    const data = await fetchAdvancedUsers({
-      username,
-      location,
-      minRepos,
-      page: nextPage,
-    });
-
-    setUsers((prev) => [...prev, ...data.items]);
+    try {
+      const data = await fetchAdvancedUsers({
+        username,
+        location,
+        minRepos: minRepos || undefined,
+        page: nextPage,
+      });
+      setUsers((prev) => [...prev, ...(data.items || [])]);
+    } catch (err) {
+      console.error(err);
+      setError(true);
+    }
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto mt-8">
+      {/* Search Form */}
       <form
         onSubmit={handleSearch}
-        className="bg-white p-4 rounded shadow space-y-4"
+        className="bg-white p-6 rounded shadow space-y-4"
       >
         <input
           className="w-full border p-2 rounded"
@@ -116,35 +162,43 @@ function Search() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-
         <input
           className="w-full border p-2 rounded"
           placeholder="Location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
-
         <input
           className="w-full border p-2 rounded"
           type="number"
           placeholder="Minimum repositories"
           value={minRepos}
-          onChange={(e) => setMinRepos(e.target.value)}
+          onChange={(e) =>
+            setMinRepos(e.target.value === "" ? "" : Number(e.target.value))
+          }
         />
-
-        <button className="w-full bg-black text-white p-2 rounded">
+        <button
+          type="submit"
+          className="w-full bg-black text-white p-2 rounded"
+        >
           Search
         </button>
       </form>
 
-      {loading && <p className="mt-4">Loading...</p>}
-      {error && <p className="mt-4">Looks like we cant find the user</p>}
+      {/* Loading & Error Messages */}
+      {loading && <p className="mt-4 text-center">Loading...</p>}
+      {error && (
+        <p className="mt-4 text-center text-red-600">
+          Looks like we can't find the user
+        </p>
+      )}
 
+      {/* Search Results */}
       <div className="mt-6 space-y-4">
         {users.map((user) => (
           <div
             key={user.id}
-            className="flex items-center gap-4 p-4 border rounded"
+            className="flex items-center gap-4 p-4 border rounded bg-white"
           >
             <img
               src={user.avatar_url}
@@ -166,10 +220,11 @@ function Search() {
         ))}
       </div>
 
+      {/* Load More Button */}
       {users.length > 0 && (
         <button
           onClick={loadMore}
-          className="mt-4 w-full border p-2 rounded"
+          className="mt-4 w-full border p-2 rounded bg-gray-200 hover:bg-gray-300"
         >
           Load More
         </button>
