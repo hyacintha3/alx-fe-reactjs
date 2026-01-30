@@ -57,6 +57,124 @@
 // export default Search;
 
 
+// import { useState } from "react";
+// import { fetchAdvancedUsers } from "../services/githubService";
+
+// function Search() {
+//   const [username, setUsername] = useState("");
+//   const [location, setLocation] = useState("");
+//   const [minRepos, setMinRepos] = useState("");
+//   const [users, setUsers] = useState([]);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState(false);
+//   const [page, setPage] = useState(1);
+
+//   const handleSearch = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     setError(false);
+//     setUsers([]);
+//     setPage(1);
+
+//     try {
+//       const data = await fetchAdvancedUsers({
+//         username,
+//         location,
+//         minRepos: minRepos || undefined,
+//         page: 1,
+//       });
+//       setUsers(data.items || []);
+//     } catch (err) {
+//       console.error(err);
+//       setError(true);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const loadMore = async () => {
+//     const nextPage = page + 1;
+//     setPage(nextPage);
+
+//     try {
+//       const data = await fetchAdvancedUsers({
+//         username,
+//         location,
+//         minRepos: minRepos || undefined,
+//         page: nextPage,
+//       });
+//       setUsers((prev) => [...prev, ...(data.items || [])]);
+//     } catch (err) {
+//       console.error(err);
+//       setError(true);
+//     }
+//   };
+
+//   return (
+//     <div className="max-w-3xl mx-auto mt-8">
+//       {/* Search Form */}
+//       <form onSubmit={handleSearch} className="bg-white p-6 rounded shadow space-y-4">
+//         <input
+//           className="w-full border p-2 rounded"
+//           placeholder="GitHub username"
+//           value={username}
+//           onChange={(e) => setUsername(e.target.value)}
+//         />
+//         <input
+//           className="w-full border p-2 rounded"
+//           placeholder="Location"
+//           value={location}
+//           onChange={(e) => setLocation(e.target.value)}
+//         />
+//         <input
+//           className="w-full border p-2 rounded"
+//           type="number"
+//           placeholder="Minimum repositories"
+//           value={minRepos}
+//           onChange={(e) =>
+//             setMinRepos(e.target.value === "" ? "" : Number(e.target.value))
+//           }
+//         />
+//         <button type="submit" className="w-full bg-black text-white p-2 rounded hover:bg-gray-800 transition">
+//           Search
+//         </button>
+//       </form>
+
+//       {/* Loading & Error */}
+//       {loading && <p className="mt-4 text-center">Loading...</p>}
+//       {error && <p className="mt-4 text-center text-red-600">Looks like we can't find the user</p>}
+
+//       {/* Search Results */}
+//       <div className="mt-6 space-y-4">
+//         {users.map((user) => (
+//           <div key={user.id} className="flex items-center gap-4 p-4 border rounded bg-white">
+//             <img src={user.avatar_url} alt={user.login} className="w-16 h-16 rounded-full" />
+//             <div>
+//               <h3 className="font-bold">{user.login}</h3>
+//               <a href={user.html_url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+//                 View Profile
+//               </a>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* Load More Button */}
+//       {users.length > 0 && (
+//         <button
+//           onClick={loadMore}
+//           className="mt-4 w-full border p-2 rounded bg-gray-200 hover:bg-gray-300 transition"
+//         >
+//           Load More
+//         </button>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default Search;
+
+
 import { useState } from "react";
 import { fetchAdvancedUsers } from "../services/githubService";
 
@@ -69,6 +187,7 @@ function Search() {
   const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
 
+  // Handle search
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -92,6 +211,7 @@ function Search() {
     }
   };
 
+  // Load more results
   const loadMore = async () => {
     const nextPage = page + 1;
     setPage(nextPage);
@@ -142,7 +262,11 @@ function Search() {
 
       {/* Loading & Error */}
       {loading && <p className="mt-4 text-center">Loading...</p>}
-      {error && <p className="mt-4 text-center text-red-600">Looks like we can't find the user</p>}
+      {error && (
+        <p className="mt-4 text-center text-red-600">
+          Looks like we can't find the user
+        </p>
+      )}
 
       {/* Search Results */}
       <div className="mt-6 space-y-4">
@@ -151,6 +275,8 @@ function Search() {
             <img src={user.avatar_url} alt={user.login} className="w-16 h-16 rounded-full" />
             <div>
               <h3 className="font-bold">{user.login}</h3>
+              {user.location && <p>Location: {user.location}</p>}
+              {user.public_repos !== undefined && <p>Repositories: {user.public_repos}</p>}
               <a href={user.html_url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
                 View Profile
               </a>
