@@ -47,7 +47,7 @@
 
 import axios from "axios";
 
-// Fetch GitHub users with advanced search
+// Search users with advanced query
 export const fetchAdvancedUsers = async ({ username, location, minRepos, page }) => {
   let query = "";
   if (username) query += `${username} `;
@@ -56,11 +56,11 @@ export const fetchAdvancedUsers = async ({ username, location, minRepos, page })
 
   const config = {
     headers: {
-      Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`, // optional token
+      Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
     },
   };
 
-  // 1️⃣ Search users
+  // Search users
   const response = await axios.get("https://api.github.com/search/users", {
     params: { q: query.trim(), page, per_page: 5 },
     ...config,
@@ -68,12 +68,12 @@ export const fetchAdvancedUsers = async ({ username, location, minRepos, page })
 
   const users = response.data.items || [];
 
-  // 2️⃣ Fetch full details for each user (location, public_repos, etc.)
+  // Fetch additional details (location, repo count) for each user
   const detailedUsers = await Promise.all(
     users.map(async (user) => {
       try {
-        const res = await axios.get(user.url, config);
-        return res.data; // full user object
+        const res = await axios.get(user.url, config); // user.url is https://api.github.com/users/{username}
+        return res.data; // full user object with location, public_repos, etc.
       } catch {
         return user; // fallback to basic info if error
       }
