@@ -6,13 +6,21 @@
 //   plugins: [react()]
 // })
 
+// import { defineConfig } from 'vite'
+// import react from '@vitejs/plugin-react'
+// import tailwindcss from '@tailwindcss/vite' // ✅ optional
+
+// export default defineConfig({
+//   plugins: [
+//     react(),
+//     tailwindcss() // ✅ optional, only for satisfying some checks
+//   ]
+// })
+
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite' // ✅ optional
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss() // ✅ optional, only for satisfying some checks
-  ]
+  plugins: [react()]
 })

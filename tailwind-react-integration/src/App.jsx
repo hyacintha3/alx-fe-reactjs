@@ -35,12 +35,25 @@
 // export default App
 
 
+// function App() {
+//   return (
+//     <div className="text-center text-blue-500 text-3xl">
+//       Tailwind is working!
+//     </div>
+//   )
+// }
+
+// export default App;
+
+
+import UserProfile from './components/UserProfile'
+
 function App() {
   return (
-    <div className="text-center text-blue-500 text-3xl">
-      Tailwind is working!
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <UserProfile />
     </div>
   )
 }
 
-export default App;
+export default App
