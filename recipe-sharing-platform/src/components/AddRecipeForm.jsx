@@ -18,10 +18,8 @@ const AddRecipeForm = () => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
-
     if (Object.keys(validationErrors).length > 0) return;
 
-    // Format recipe
     const newRecipe = {
       title,
       ingredients: ingredients.split(",").map((item) => item.trim()),
@@ -30,7 +28,6 @@ const AddRecipeForm = () => {
 
     console.log("New Recipe Submitted:", newRecipe);
 
-    // Reset form
     setTitle("");
     setIngredients("");
     setSteps("");
@@ -42,9 +39,11 @@ const AddRecipeForm = () => {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg"
+        className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8 w-full max-w-md md:max-w-lg"
       >
-        <h1 className="text-2xl font-bold mb-6 text-center">Add a New Recipe</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center">
+          Add a New Recipe
+        </h1>
 
         {/* Title */}
         <label className="block mb-2 font-semibold">Recipe Title</label>
@@ -85,7 +84,7 @@ const AddRecipeForm = () => {
 
         <button
           type="submit"
-          className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
+          className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition md:py-3 md:text-lg"
         >
           Add Recipe
         </button>
